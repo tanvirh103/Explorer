@@ -1,27 +1,53 @@
-export default function Searchbar({
-  blockchainData,
-}: {
-  blockchainData: any;
-}) {
-  const blocks = blockchainData.data; 
+"use client";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
-  const totalTransactionValue = blocks.reduce((blockAcc:any, block:any) => {
-    const txSum = Array.isArray(block.transactions)
-      ? block.transactions.reduce((txAcc:any, tx:any) => txAcc + (tx.value || 0), 0)
-      : 0;
-    return blockAcc + txSum;
-  }, 0);
+export default function Searchbar() {
+  const [blockdetails, setBlockdetails] = useState<any[]>([]);
 
+  useEffect(() => {
+    const fetchBlockchainData = async () => {
+      const response = await axios.get(`http://192.168.10.30:4005/blockchain`, {
+        headers: {
+          "access-control-allow-origin": "*",
+          "content-type": "application/json; charset=utf-8",
+        },
+      });
+      setBlockdetails(response.data);
+    };
 
-  const lastBlock = blocks[blocks.length - 1];
-  const lastBlockHash = lastBlock.blockInfo?.blockHash || null;
-  const lastBlockNumber = lastBlock.blockInfo?.blockNumber || null;
+    fetchBlockchainData();
 
-  const transactions = lastBlock.transactions || [];
+    // const socket = io("http://192.168.10.30:4005");
+    // socket.on("notify_explorer", () => {
+    //   fetchBlockchainData();
+    // });
+
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, []);
+
+  const totalTransactionValue = blockdetails.reduce(
+    (blockAcc: any, block: any) => {
+      const txSum = Array.isArray(block?.transactions)
+        ? block?.transactions.reduce(
+            (txAcc: any, tx: any) => txAcc + (tx.value || 0),
+            0
+          )
+        : 0;
+      return blockAcc + txSum;
+    },
+    0
+  );
+  const lastBlock = blockdetails[blockdetails.length - 1];
+  const lastBlockHash = lastBlock?.blockInfo?.blockHash || null;
+  const lastBlockNumber = lastBlock?.blockInfo?.blockNumber || null;
+
+  const transactions = lastBlock?.transactions || [];
   const lastTransaction = transactions[transactions.length - 1] || {};
   const lastTransactionHash = lastTransaction.signature || null;
-
-
 
   return (
     <div className="relative bg-gradient-to-br from-[#0d4c8f] via-[#81baff]  to-[#0d4c8f] h-[200px]">
@@ -267,7 +293,7 @@ export default function Searchbar({
               Latest Block
             </p>
             <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8 w-30 truncate">
-             {lastBlockHash}
+              {lastBlockHash}
             </p>
           </div>
 
@@ -293,7 +319,7 @@ export default function Searchbar({
               Last Finalized Block
             </p>
             <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8 w-30 truncate">
-             {lastBlockHash}
+              {lastBlockHash}
             </p>
           </div>
           <div className="p-2">
@@ -318,7 +344,7 @@ export default function Searchbar({
               Block Height
             </p>
             <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-             {lastBlockNumber}
+              {lastBlockNumber}
             </p>
           </div>
         </div>

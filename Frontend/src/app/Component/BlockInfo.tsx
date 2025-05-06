@@ -1,10 +1,34 @@
+"use client";
+import axios from "axios";
 import Link from "next/link";
-export default async function BlockInfo({
-  blockchainData,
-}: {
-  blockchainData: any;
-}) {
-  const sortedBlocks = [...blockchainData.data].sort(
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+export default function BlockInfo() {
+  const [blockchainData, setBlockdetails] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchBlockchainData = async () => {
+      const response = await axios.get(`http://192.168.10.30:4005/blockchain`, {
+        headers: {
+          "access-control-allow-origin": "*",
+          "content-type": "application/json; charset=utf-8",
+        },
+      });
+      setBlockdetails(response.data);
+    };
+
+    fetchBlockchainData();
+
+    // const socket = io("http://192.168.10.30:4005");
+    // socket.on("notify_explorer", () => {
+    //   fetchBlockchainData();
+    // });
+
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, []);
+  const sortedBlocks = [...blockchainData].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
   return (
@@ -17,7 +41,7 @@ export default async function BlockInfo({
           <div className="p-4">
             <table className="w-full border-collapse">
               <tbody>
-                {blockchainData.data.map((block: any, index: any) => (
+                {blockchainData.map((block: any, index: any) => (
                   <tr key={index} className="border-b-1 border-[#eeeeee]">
                     <td>
                       <svg
@@ -58,7 +82,7 @@ export default async function BlockInfo({
                       </svg>
                     </td>
                     <td className="p-2 text-[14px] font-[500]">
-                      <p className="text-[#0d4c8f]  w-[80] truncate">
+                      <p className="text-[#0d4c8f]  w-[90] truncate inline-block">
                         <Link href={`/block/${block.blockInfo.blockHash}`}>
                           {block.blockInfo.blockHash}
                         </Link>
@@ -67,16 +91,12 @@ export default async function BlockInfo({
                         {new Date(block.blockInfo.timestamp).toLocaleString()}
                       </p>
                     </td>
-                    <td className="p-2 text-[14px] font-[500] w-30 truncate">
-                      <p>
-                        Miner{" "}
-                        <span className="text-[#0d4c8f]  w-30 truncate">
-                          {block.blockInfo.blockNumber}
+                    <td className="p-2 text-[14px] font-[500]">
+                      <p className="w-40 truncate">
+                        Miner:{" "}
+                        <span className="text-[#0d4c8f] ">
+                          {block.blockInfo.validator.publicKey}
                         </span>
-                      </p>
-
-                      <p className="w-30 truncate">
-                        {block.blockInfo.validator.publicKey}
                       </p>
                     </td>
                     <td className="p-2 text-[14px] font-[500]"></td>
@@ -95,16 +115,16 @@ export default async function BlockInfo({
           <div className="border-b-2 border-[#eeeeee] px-4 py-4">
             <p className="text-[16px] font-[500]">Latest Transactions</p>
           </div>
-          <div className="p-6">
+          <div className="p-4">
             {sortedBlocks.flatMap((block, index) => (
               <table className="w-full border-collapse">
                 <tbody>
                   {block.transactions.map((tx: any, txIndex: any) => (
                     <tr key={txIndex} className="border-b-1 border-[#eeeeee]">
-                      <td className="w-[24px] h-[36px]">
+                      <td className="">
                         <svg
-                          width="34"
-                          height="34"
+                          width="28"
+                          height="28"
                           viewBox="0 0 162 162"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
