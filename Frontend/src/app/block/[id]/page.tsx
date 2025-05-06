@@ -1,13 +1,28 @@
 import BlockDetails from "@/app/Component/BlockDetails";
 import Footer from "@/app/Component/footer";
 import Navbar from "@/app/Component/Navbar";
+import axios from "axios";
 
-export default function Block({ params }: { params: any }) {
+
+export default async function Block({ params }:  any ) {
+  const id=await params.id
+  const response = await axios.get(
+    `http://172.20.112.1:4005/blockchain`,
+    {
+      headers: {
+        'access-control-allow-origin': '*',
+        'content-type': 'application/json; charset=utf-8',
+      },
+    }
+  );
+
+  const blockinfo = response.data.find((block: any) => block.blockInfo.blockHash === id);
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <BlockDetails id={params.id} />
-      <div className="mt-auto ">
+      <BlockDetails data={blockinfo} />
+      <div className="mt-auto">
         <Footer />
       </div>
     </div>

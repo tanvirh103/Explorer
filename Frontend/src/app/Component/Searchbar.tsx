@@ -1,4 +1,28 @@
-export default function Searchbar() {
+export default function Searchbar({
+  blockchainData,
+}: {
+  blockchainData: any;
+}) {
+  const blocks = blockchainData.data; 
+
+  const totalTransactionValue = blocks.reduce((blockAcc:any, block:any) => {
+    const txSum = Array.isArray(block.transactions)
+      ? block.transactions.reduce((txAcc:any, tx:any) => txAcc + (tx.value || 0), 0)
+      : 0;
+    return blockAcc + txSum;
+  }, 0);
+
+
+  const lastBlock = blocks[blocks.length - 1];
+  const lastBlockHash = lastBlock.blockInfo?.blockHash || null;
+  const lastBlockNumber = lastBlock.blockInfo?.blockNumber || null;
+
+  const transactions = lastBlock.transactions || [];
+  const lastTransaction = transactions[transactions.length - 1] || {};
+  const lastTransactionHash = lastTransaction.signature || null;
+
+
+
   return (
     <div className="relative bg-gradient-to-br from-[#0d4c8f] via-[#81baff]  to-[#0d4c8f] h-[200px]">
       <div className="pt-4 px-4 2xl:px-12 lg:px-8 pb-2 max-w-1400px lg:max-w-[1400px] 2xl:max-w-[1560px] md:max-w-[1200px] sm:max-w-[1020px] mx-auto">
@@ -37,7 +61,7 @@ export default function Searchbar() {
               Total Amount
             </p>
             <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-              $874845384
+              ${totalTransactionValue}
             </p>
           </div>
           <div className="border-b-1 border-[#eeeeee] p-2">
@@ -59,10 +83,10 @@ export default function Searchbar() {
                   </g>
                 </g>
               </svg>{" "}
-              Transactions
+              Latest Transaction Hash
             </p>
-            <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-              $874845384
+            <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8 w-[80px] truncate">
+              {lastTransactionHash}
             </p>
           </div>
           <div className="border-b-1 border-[#eeeeee] p-2">
@@ -87,7 +111,7 @@ export default function Searchbar() {
               Total Final Block
             </p>
             <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-              $874845384
+              {lastBlockNumber}
             </p>
           </div>
           <div className="p-2">
@@ -242,8 +266,8 @@ export default function Searchbar() {
               </svg>
               Latest Block
             </p>
-            <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-              $874845384
+            <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8 w-30 truncate">
+             {lastBlockHash}
             </p>
           </div>
 
@@ -268,8 +292,8 @@ export default function Searchbar() {
               </svg>{" "}
               Last Finalized Block
             </p>
-            <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-              $874845384
+            <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8 w-30 truncate">
+             {lastBlockHash}
             </p>
           </div>
           <div className="p-2">
@@ -291,10 +315,10 @@ export default function Searchbar() {
                   </g>
                 </g>
               </svg>{" "}
-              Last Safe Block
+              Block Height
             </p>
             <p className="font-[500] text-[14px] text-[#0d4c8f] ml-8">
-              $874845384
+             {lastBlockNumber}
             </p>
           </div>
         </div>
