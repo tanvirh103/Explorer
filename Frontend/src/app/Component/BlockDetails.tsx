@@ -72,7 +72,7 @@ export default function datas({ data }: { data: any }) {
                 <tbody>
                   {data.transactions.map((tx: any, index: any) => (
                     <tr key={index} className="border-b-1 border-[#eeeeee]">
-                      <td className="w-[24px] h-[36px]">
+                      <td className="">
                         <svg
                           width="34"
                           height="34"
@@ -180,14 +180,14 @@ export default function datas({ data }: { data: any }) {
                           />
                         </svg>
                       </td>
-                      <td className="p-2 text-[14px] font-[500] w-40 truncate inline-block">{tx.signature}</td>
-                      <td className="p-4 text-[14px] font-[500]">
+                      <td className="p-2 text-[14px] font-[500] w-40 truncate inline-block ">{tx.signature}</td>
+                      <td className="p-2 text-[14px] font-[500]">
                         <p className="w-40 truncate inline-block">
                           From{" "}
-                          <span className="text-[#0d4c8f]  ">{tx.from}</span>{" "}
+                          <span className="text-[#0d4c8f] ">{tx.from}</span>{" "}
                         </p>
                         <p className="w-40 truncate inline-block">
-                          To <span className="text-[#0d4c8f] "> {tx.to}</span>
+                          To <span className="text-[#0d4c8f] ">{tx.to}</span>
                         </p>
                       </td>
                       <td className="p-2 text-[14px] font-[500] w-[50px]">

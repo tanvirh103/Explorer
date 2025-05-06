@@ -8,7 +8,7 @@ export default function BlockInfo() {
 
   useEffect(() => {
     const fetchBlockchainData = async () => {
-      const response = await axios.get(`http://192.168.10.30:4005/blockchain`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_IP}/blockchain`, {
         headers: {
           "access-control-allow-origin": "*",
           "content-type": "application/json; charset=utf-8",
@@ -41,12 +41,12 @@ export default function BlockInfo() {
           <div className="p-4">
             <table className="w-full border-collapse">
               <tbody>
-                {blockchainData.map((block: any, index: any) => (
-                  <tr key={index} className="border-b-1 border-[#eeeeee]">
+                {blockchainData.map((block: any, index: number) => (
+                  <tr key={block._id} className="border-b-1 border-[#eeeeee]">
                     <td>
                       <svg
-                        width="34"
-                        height="34"
+                        width="28"
+                        height="28"
                         viewBox="0 0 162 162"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -116,11 +116,11 @@ export default function BlockInfo() {
             <p className="text-[16px] font-[500]">Latest Transactions</p>
           </div>
           <div className="p-4">
-            {sortedBlocks.flatMap((block, index) => (
-              <table className="w-full border-collapse">
+            {sortedBlocks.flatMap((block,blockIndex) => (
+              <table key={blockIndex} className="w-full border-collapse">
                 <tbody>
-                  {block.transactions.map((tx: any, txIndex: any) => (
-                    <tr key={txIndex} className="border-b-1 border-[#eeeeee]">
+                  {block.transactions.map((tx: any, txIndex: number) => (
+                    <tr key={tx.signature} className="border-b-1 border-[#eeeeee]">
                       <td className="">
                         <svg
                           width="28"
@@ -239,10 +239,10 @@ export default function BlockInfo() {
                       <td className="p-2 text-[14px] font-[500] w-40 truncate inline-block">
                         <p className="">
                           From{" "}
-                          <span className="text-[#0d4c8f]  ">{tx.from}</span>{" "}
+                          <span className="text-[#0d4c8f]">{tx.from}</span>{" "}
                         </p>
                         <p className="">
-                          To <span className="text-[#0d4c8f]  "> {tx.to}</span>
+                          To <span className="text-[#0d4c8f]">{tx.to}</span>
                         </p>
                       </td>
                       <td className="p-2 text-[14px] font-[500] w-[50px]">

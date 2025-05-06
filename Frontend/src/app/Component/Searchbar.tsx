@@ -8,7 +8,7 @@ export default function Searchbar() {
 
   useEffect(() => {
     const fetchBlockchainData = async () => {
-      const response = await axios.get(`http://192.168.10.30:4005/blockchain`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_IP}/blockchain`, {
         headers: {
           "access-control-allow-origin": "*",
           "content-type": "application/json; charset=utf-8",

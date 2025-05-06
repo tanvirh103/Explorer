@@ -6,13 +6,13 @@ import Footer from "./Component/footer";
 export default async function Home() {
 
   return (
-   <div>
-    <Navbar />
-    <Searchbar />
-    <BlockInfo/> 
-    <div className="mt-[110px]">
-      <Footer/>
-    </div>
-   </div>
+    <div className="min-h-screen flex flex-col">
+  <Navbar />
+  <Searchbar />
+  <div className="flex-grow">
+    <BlockInfo />
+  </div>
+  <Footer />
+</div>
   );
 }

@@ -6,7 +6,7 @@ import axios from "axios";
 export default async function transactionDetails({ params }: { params: any }) {
   const id=await params.id
   const response = await axios.get(
-    `http://192.168.10.30:4005/blockchain`,
+    `${process.env.NEXT_PUBLIC_IP}/blockchain`,
     {
       headers: {
         'access-control-allow-origin': '*',
