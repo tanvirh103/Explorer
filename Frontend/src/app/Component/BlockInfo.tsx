@@ -8,25 +8,40 @@ export default function BlockInfo() {
 
   useEffect(() => {
     const fetchBlockchainData = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_IP}/blockchain`, {
-        headers: {
-          "access-control-allow-origin": "*",
-          "content-type": "application/json; charset=utf-8",
-        },
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_IP}/blockchain`,
+        {
+          headers: {
+            "access-control-allow-origin": "*",
+            "content-type": "application/json; charset=utf-8",
+          },
+        }
+      );
       setBlockdetails(response.data);
     };
 
     fetchBlockchainData();
 
-    // const socket = io("http://192.168.10.30:4005");
-    // socket.on("notify_explorer", () => {
-    //   fetchBlockchainData();
-    // });
+    const socket = io(process.env.NEXT_PUBLIC_IP, {
+      withCredentials: true,
+      transports: ["websocket"],
+      extraHeaders: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
 
-    // return () => {
-    //   socket.disconnect();
-    // };
+    socket.on("notify_explorer", () => {
+      console.log("notify_explorer triggered");
+      fetchBlockchainData();
+    });
+
+    socket.on("connect", () => {
+      console.log("socket.connected"); // true
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
   const sortedBlocks = [...blockchainData].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -41,7 +56,7 @@ export default function BlockInfo() {
           <div className="p-4">
             <table className="w-full border-collapse">
               <tbody>
-                {blockchainData.map((block: any, index: number) => (
+                {sortedBlocks.map((block: any, index: number) => (
                   <tr key={block._id} className="border-b-1 border-[#eeeeee]">
                     <td>
                       <svg
@@ -116,11 +131,14 @@ export default function BlockInfo() {
             <p className="text-[16px] font-[500]">Latest Transactions</p>
           </div>
           <div className="p-4">
-            {sortedBlocks.flatMap((block,blockIndex) => (
+            {sortedBlocks.flatMap((block, blockIndex) => (
               <table key={blockIndex} className="w-full border-collapse">
                 <tbody>
                   {block.transactions.map((tx: any, txIndex: number) => (
-                    <tr key={tx.signature} className="border-b-1 border-[#eeeeee]">
+                    <tr
+                      key={tx.signature + txIndex}
+                      className="border-b-1 border-[#eeeeee]"
+                    >
                       <td className="">
                         <svg
                           width="28"
@@ -238,8 +256,7 @@ export default function BlockInfo() {
                       </td>
                       <td className="p-2 text-[14px] font-[500] w-40 truncate inline-block">
                         <p className="">
-                          From{" "}
-                          <span className="text-[#0d4c8f]">{tx.from}</span>{" "}
+                          From <span className="text-[#0d4c8f]">{tx.from}</span>{" "}
                         </p>
                         <p className="">
                           To <span className="text-[#0d4c8f]">{tx.to}</span>
